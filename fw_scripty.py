@@ -1,7 +1,7 @@
 import time
-import whisper
 import torch
 import numpy as np
+from faster_whisper import WhisperModel
 
 
 def check_environment():
@@ -16,41 +16,37 @@ def check_environment():
     # Print the versions of the main libraries
     print(f"PyTorch version: {torch.__version__}")
     print(f"NumPy version: {np.__version__}")
-    print(f"Whisper version: {whisper.__version__}")
+    print("Using faster-whisper for transcription.")
 
 
 def scripty():
-    # Load the Whisper model and force it to use the CPU
-    model = whisper.load_model("large")
+    # Load the faster-whisper model
+    print("Before loading model")
+    model = WhisperModel("large-v3", device="cuda" if torch.cuda.is_available() else "cpu")
+    print("After loading model")
 
     # Check if the model is loaded
     if model is not None:
         print("Model loaded successfully!")
-        print(model.dims)
     else:
         print("Model failed to load.")
 
-    # Load audio file and pad/trim it to fit 30 seconds
-    audio = whisper.load_audio("samples/german.mp3")
-    audio = whisper.pad_or_trim(audio)
+    # Load and process the audio file
+    segments, info = model.transcribe("samples/german.mp3")
 
-    # Make log-Mel spectrogram and move to the same device as the model
-    mel = whisper.log_mel_spectrogram(audio).to(model.device)
-
-    # Detect the spoken language
-    #_, probs = model.detect_language(mel)
-    #print(f"Detected language: {max(probs, key=probs.get)}")
-
-    # Decode the audio
+    # Decode the audio and measure the time taken
     start_time = time.time()
-    options = whisper.DecodingOptions()
-    result = whisper.decode(model, mel, options)
+
+    # Collect the recognized text
+    recognized_text = ""
+    for segment in segments:
+        recognized_text += segment.text
 
     end_time = time.time()
     print(f"Decoding took {end_time - start_time:.2f} seconds")
 
     # Print the recognized text
-    print("Text: " + result.text)
+    print("Text: " + recognized_text)
 
 
 if __name__ == "__main__":
