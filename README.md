@@ -1,6 +1,9 @@
 # scripty
 scripty is a collection of AI powered speech to text prototypes based on [whisper](https://github.com/openai/whisper) and [faster-whisper](https://github.com/SYSTRAN/faster-whisper). For each, there is an example for processing a audio file and processing realtime microphone input. The inference is running locally. 
 
+<p align="center"><img alt="smoothing" src="rsc/scritpy-ex.PNG" width="90%"></p>
+
+
 # Installation
 Windows, NO CUDA
 ```
