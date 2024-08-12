@@ -1,3 +1,6 @@
+# Note W+T: This code was copied from https://github.com/davabase/whisper_real_time
+#           and translated to fast-whisper using ChatGPT.
+
 import argparse
 import os
 import numpy as np

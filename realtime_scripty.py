@@ -1,7 +1,5 @@
 # Note W+T: This code is entirely copied from https://github.com/davabase/whisper_real_time
 
-#! python3.7
-
 import argparse
 import os
 import numpy as np
