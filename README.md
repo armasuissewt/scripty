@@ -12,6 +12,7 @@ pip install -U openai-whisper
 pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0
 pip install numpy==1.23.5
 pip install faster-whisper
+pip install SpeechRecognition
 ```
 
 Windows, With CUDA
@@ -21,5 +22,6 @@ pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1+cu1
 pip install numpy==1.23.5 
 pip install openai-whisper
 pip install faster-whisper
+pip install SpeechRecognition
 ```
 
