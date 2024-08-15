@@ -12,6 +12,9 @@ from time import sleep
 from sys import platform
 from faster_whisper import WhisperModel
 
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="medium", help="Model to use",
