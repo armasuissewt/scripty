@@ -123,13 +123,16 @@ def main():
                 # Otherwise edit the existing one.
                 if phrase_complete:
                     transcription.append(text)
+                    print(text)
                 else:
                     transcription[-1] = text
 
+
+
                 # Clear the console to reprint the updated transcription.
-                os.system('cls' if os.name == 'nt' else 'clear')
-                for line in transcription:
-                    print(line)
+                # os.system('cls' if os.name == 'nt' else 'clear')
+                #for line in transcription:
+                    #print(line)
                 # Flush stdout.
                 print('', end='', flush=True)
             else:
