@@ -145,7 +145,7 @@ def main():
                     print(text)
 
                     # write to out-file
-                    with open(args.out_file, 'a') as f:
+                    with open(args.out_file, 'a', encoding="utf-8") as f:
                         current_time = datetime.now()
                         time_str = current_time.strftime("%Y-%m-%d %H:%M:%S")
                         f.write(time_str + ": " + text + "\n")
