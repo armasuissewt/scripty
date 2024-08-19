@@ -4,6 +4,7 @@
 import argparse
 import os
 import numpy as np
+import datetime
 import speech_recognition as sr
 import torch
 from datetime import datetime, timedelta
@@ -15,10 +16,23 @@ from faster_whisper import WhisperModel
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
+def check_environment():
+    # Check if CUDA is available
+    cuda_available = torch.cuda.is_available()
+    if cuda_available:
+        cuda_version = torch.version.cuda
+        print(f"CUDA is available. Version: {cuda_version}")
+    else:
+        print("CUDA is not available.")
+
+    # Print the versions of the main libraries
+    print(f"PyTorch version: {torch.__version__}")
+    print(f"NumPy version: {np.__version__}")
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="medium", help="Model to use",
-                        choices=["tiny", "base", "small", "medium", "large", "large-v3"])
+                        choices=["tiny", "base", "small", "medium", "large", "large-v2", "large-v3"])
     parser.add_argument("--non_english", action='store_true',
                         help="Don't use the english model.")
     parser.add_argument("--energy_threshold", default=1000,
@@ -28,11 +42,15 @@ def main():
     parser.add_argument("--phrase_timeout", default=3,
                         help="How much empty space between recordings before we "
                              "consider it a new line in the transcription.", type=float)
+    parser.add_argument("--out_file", default="out.txt",
+                        help="Path of the output file.", type=str)
     if 'linux' in platform:
         parser.add_argument("--default_microphone", default='pulse',
                             help="Default microphone name for SpeechRecognition. "
                                  "Run this with 'list' to view available Microphones.", type=str)
     args = parser.parse_args()
+
+    check_environment()
 
     # The last time a recording was retrieved from the queue.
     phrase_time = None
@@ -62,11 +80,11 @@ def main():
         source = sr.Microphone(sample_rate=16000)
 
     # Load / Download model
-    model_name = args.model if args.model != "large" else "large-v2"
+    model_name = args.model
     audio_model = WhisperModel(model_name, device="cuda" if torch.cuda.is_available() else "cpu")
 
     if audio_model is not None:
-        print("Model loaded successfully! -> ", model_name)
+        print("Model loaded successfully -> ", model_name)
     else:
         print("Model failed to load -> ", model_name)
 
@@ -92,8 +110,6 @@ def main():
     recorder.listen_in_background(source, record_callback, phrase_time_limit=record_timeout)
 
     # Cue the user that we're ready to go.
-    print("Model loaded.\n")
-
     while True:
         try:
             now = datetime.utcnow()
@@ -127,10 +143,14 @@ def main():
                 if phrase_complete:
                     transcription.append(text)
                     print(text)
+
+                    # write to out-file
+                    with open(args.out_file, 'a') as f:
+                        current_time = datetime.now()
+                        time_str = current_time.strftime("%Y-%m-%d %H:%M:%S")
+                        f.write(time_str + ": " + text + "\n")
                 else:
                     transcription[-1] = text
-
-
 
                 # Clear the console to reprint the updated transcription.
                 # os.system('cls' if os.name == 'nt' else 'clear')
