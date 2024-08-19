@@ -16,6 +16,11 @@ from faster_whisper import WhisperModel
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
+def print_header():
+    print("Real-time Speech-to-Text Transcription")
+    print("Author: Adrian Schneider, W+T")
+
+
 def check_environment():
     # Check if CUDA is available
     cuda_available = torch.cuda.is_available()
@@ -30,6 +35,8 @@ def check_environment():
     print(f"NumPy version: {np.__version__}")
 
 def main():
+    print_header()
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="medium", help="Model to use",
                         choices=["tiny", "base", "small", "medium", "large", "large-v2", "large-v3"])
@@ -49,6 +56,7 @@ def main():
                             help="Default microphone name for SpeechRecognition. "
                                  "Run this with 'list' to view available Microphones.", type=str)
     args = parser.parse_args()
+
 
     check_environment()
 
